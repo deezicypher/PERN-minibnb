@@ -31,7 +31,6 @@ export const login = async (req: Request, res: Response) => {
         }
     })
         if(!user) return res.status(404).json({ message: 'Invalid email ' })
-        console.log(user, email, password)
         const checkPassword = bcrypt.compareSync(password, user.password)
         if (!checkPassword) return res.status(404).json({ message: 'Invalid password ' })
 
@@ -64,4 +63,24 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
 
+}
+export const getProfile = async (req: Request, res: Response) => {
+   
+    const token = req.cookies.access_token;
+    console.log(token)
+    
+    if(!token) return res.status(403).json("Not authorized");
+
+    try{
+    const user = await prisma.user.findUnique({
+        where:{
+            email:token.email,
+        }
+    })
+
+    return res.status(200).json(user)
+}catch(err) {
+    res.status(500).json(err)
+}
+    
 }

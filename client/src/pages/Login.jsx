@@ -1,7 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState,useContext} from 'react'
 import { Link,useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast';
 import instance from '../../config';
+import { UserContext } from '../context/userContext';
+
 
 
 
@@ -10,6 +12,8 @@ const Login = () => {
     email:'',
     password: ''
   }) 
+
+  const {setUser} = useContext(UserContext)
 
   const navigate = useNavigate();
   const { email, password} = inputs
@@ -21,7 +25,8 @@ const Login = () => {
   const login = async (e) => {
     e.preventDefault()
       try {
-        await instance.post('/users/login', inputs)
+        const res = await instance.post('/users/login', inputs)
+        setUser(res.data)
         toast.success("Login successfull")
         navigate('/')
       } catch (error) {
